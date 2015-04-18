@@ -216,6 +216,7 @@ class Table extends BaseTable
         $lifecycleCallbacks  = $this->getLifecycleCallbacks();
 
         $extendsClass = $this->getClassToExtend();
+        $abstractEntities = $this->getConfig()->get(Formatter::CFG_ABSTRACT_ENTITIES);
         $implementsInterface = $this->getInterfaceToImplement();
 
         $comment = $this->getComment();
@@ -247,7 +248,7 @@ class Table extends BaseTable
             ->writeIf($extendableEntity, ' * '.$this->getAnnotation('DiscriminatorMap', array($this->getInheritanceDiscriminatorMap())))
             ->writeIf($lifecycleCallbacks, ' * @HasLifecycleCallbacks')
             ->write(' */')
-            ->write('class '.$this->getClassName($extendableEntity).$extendsClass.$implementsInterface)
+            ->write(($abstractEntities ? 'abstract ' : '').'class '.$this->getClassName($extendableEntity).$extendsClass.$implementsInterface)
             ->write('{')
             ->indent()
                 ->writeCallback(function(WriterInterface $writer, Table $_this = null) use ($skipGetterAndSetter, $serializableEntity, $lifecycleCallbacks) {
