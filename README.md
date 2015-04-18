@@ -293,6 +293,12 @@ Common Setup Options for Doctrine 2.0:
 
     Default is `''`.
 
+  * `abstractEntities`
+
+    This option allows you to specify whether all entities should be marked as `abstract`.
+
+    Default is `false`.
+
   * `propertyTypehint`
 
     This option allows you to specify whether type-hinting should be enabled for all *non-scalar* properties
