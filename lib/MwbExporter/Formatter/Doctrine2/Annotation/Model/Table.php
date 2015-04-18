@@ -216,7 +216,7 @@ class Table extends BaseTable
         $lifecycleCallbacks  = $this->getLifecycleCallbacks();
 
         $extendsClass = $this->getClassToExtend();
-        $abstractEntities = $this->getConfig()->get(Formatter::CFG_ABSTRACT_ENTITIES);
+        $abstractEntity = $this->getConfig()->get(Formatter::CFG_ABSTRACT_ENTITY);
         $implementsInterface = $this->getInterfaceToImplement();
 
         $comment = $this->getComment();
@@ -241,14 +241,15 @@ class Table extends BaseTable
             ->write(' * '.$this->getNamespace(null, false))
             ->write(' *')
             ->writeIf($comment, $comment)
-            ->write(' * '.$this->getAnnotation('Entity', array('repositoryClass' => $this->getConfig()->get(Formatter::CFG_AUTOMATIC_REPOSITORY) ? $repositoryNamespace.$this->getModelName().'Repository' : null)))
+            ->writeIf(!$abstractEntity, ' * '.$this->getAnnotation('Entity', array('repositoryClass' => $this->getConfig()->get(Formatter::CFG_AUTOMATIC_REPOSITORY) ? $repositoryNamespace.$this->getModelName().'Repository' : null)))
+            ->writeIf($abstractEntity, ' * '.$this->getAnnotation('MappedSuperclass'))
             ->write(' * '.$this->getAnnotation('Table', array('name' => $this->quoteIdentifier($this->getRawTableName()), 'indexes' => $this->getIndexesAnnotation('Index'), 'uniqueConstraints' => $this->getIndexesAnnotation('UniqueConstraint'))))
             ->writeIf($extendableEntity, ' * '.$this->getAnnotation('InheritanceType', array('SINGLE_TABLE')))
             ->writeIf($extendableEntity, ' * '.$this->getAnnotation('DiscriminatorColumn', $this->getInheritanceDiscriminatorColumn()))
             ->writeIf($extendableEntity, ' * '.$this->getAnnotation('DiscriminatorMap', array($this->getInheritanceDiscriminatorMap())))
             ->writeIf($lifecycleCallbacks, ' * @HasLifecycleCallbacks')
             ->write(' */')
-            ->write(($abstractEntities ? 'abstract ' : '').'class '.$this->getClassName($extendableEntity).$extendsClass.$implementsInterface)
+            ->write(($abstractEntity ? 'abstract ' : '').'class '.$this->getClassName($extendableEntity).$extendsClass.$implementsInterface)
             ->write('{')
             ->indent()
                 ->writeCallback(function(WriterInterface $writer, Table $_this = null) use ($skipGetterAndSetter, $serializableEntity, $lifecycleCallbacks) {
@@ -280,6 +281,7 @@ class Table extends BaseTable
             ->write('}')
             ->close()
         ;
+
         if ($extendableEntity && !$writer->getStorage()->hasFile($this->getClassFileName())) {
             $writer
                 ->open($this->getClassFileName())

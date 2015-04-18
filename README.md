@@ -293,7 +293,7 @@ Common Setup Options for Doctrine 2.0:
 
     Default is `''`.
 
-  * `abstractEntities`
+  * `abstractEntity`
 
     This option allows you to specify whether all entities should be marked as `abstract`.
 
