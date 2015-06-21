@@ -278,7 +278,7 @@ class Table extends BaseTable
                     }
                 })
             ->outdent()
-            ->write('}')
+            ->write("}\n")
             ->close()
         ;
 
@@ -307,7 +307,7 @@ class Table extends BaseTable
                 ->write(' */')
                 ->write('class %s extends %s', $this->getClassName(), $this->getClassName(true))
                 ->write('{')
-                ->write('}')
+                ->write("}\n")
                 ->close()
             ;
         }
